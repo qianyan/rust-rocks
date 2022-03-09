@@ -5,6 +5,7 @@ use clap::Parser;
 use colored::*;
 use mime::Mime;
 use reqwest::{header, Client, Response, Url};
+use syntect::{easy::HighlightLines, parsing::SyntaxSet, highlighting::ThemeSet, util::{LinesWithEndings, as_24_bit_terminal_escaped}};
 
 #[derive(Parser, Debug)]
 #[clap(version = "1.0", author = "Qian Yan <qianyan.lambda@gmail.com")]
@@ -90,9 +91,22 @@ fn print_headers(resp: &Response) {
 fn print_body(m: Option<Mime>, body: &String) {
     match m {
         Some(v) if v == mime::APPLICATION_JSON => {
-            println!("{}", jsonxf::pretty_print(body).unwrap().cyan())
+           // println!("{}", jsonxf::pretty_print(body).unwrap().cyan())
+           print_syntect(body);
         }
         _ => println!("{}", body),
+    }
+}
+
+fn print_syntect(s: &str) {
+    let ps = SyntaxSet::load_defaults_newlines();
+    let ts = ThemeSet::load_defaults();
+    let syntax = ps.find_syntax_by_extension("json").unwrap();
+    let mut h = HighlightLines::new(syntax, &ts.themes["base16-ocean.dark"]);
+    for line in LinesWithEndings::from(s) {
+        let ranges: Vec<(syntect::highlighting::Style, &str)> = h.highlight(line, &ps);
+        let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
+        print!("{}", escaped);
     }
 }
 
