@@ -22,7 +22,11 @@ use lru::LruCache;
 use tracing::{info, instrument};
 
 mod pb;
+mod engine;
+
 use pb::*;
+use engine::{Engine, Photon};
+use image::ImageOutputFormat;
 
 // 参数使用 serde 做 Deserialize
 #[derive(Deserialize)]
@@ -73,10 +77,19 @@ async fn generate(
             .await
             .map_err(|_| StatusCode::BAD_REQUEST)?;
         // TODO: process image
+        let mut engine: Photon = data
+            .try_into()
+            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+        engine.apply(&spec.specs);
+
+        let image = engine.generate(ImageOutputFormat::Jpeg(85));
+
+        info!("Finished processing: image size {}", image.len());
 
         let mut headers = HeaderMap::new();
         headers.insert("content-type", HeaderValue::from_static("image/jpg"));
-        Ok((headers, data.to_vec()))
+        Ok((headers, image))
 }
 
 #[instrument(level = "info", skip(cache))]
