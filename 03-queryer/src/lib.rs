@@ -1,4 +1,7 @@
 mod dialect;
+mod convert;
+
+pub use dialect::PlatoDialect;
 
 #[cfg(test)]
 mod tests {
