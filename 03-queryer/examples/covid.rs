@@ -1,30 +1,20 @@
 use anyhow::Result;
-use polars::prelude::*;
-use std::io::Cursor;
+use queryer::query;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
 
     let url = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/latest/owid-covid-latest.csv";
-    let data = reqwest::get(url).await?.text().await?;
 
-    // 使用 polars 请求
-    let dataframe = CsvReader::new(Cursor::new(data))
-        .infer_schema(Some(16))
-        .finish()?;
-
-    let filtered = dataframe.filter(&dataframe["new_deaths"].gt(500))?;
-
-    println!("{:?}",
-        filtered.select((
-                "location",
-                "total_cases",
-                "new_cases",
-                "total_deaths",
-                "new_deaths"
-             ))
+    let sql = format!(
+        "SELECT location name, total_cases, new_cases, total_deaths, new_deaths \
+        FROM {} where new_deaths >= 500 ORDER BY new_cases DESC",
+        url
     );
+
+    let  data_frame = query(sql).await?;
+    println!("{:?}", data_frame);
 
     Ok(())
 }

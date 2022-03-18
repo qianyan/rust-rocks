@@ -227,7 +227,7 @@ mod tests {
             url
         );
         let statement = &Parser::parse_sql(&PlatoDialect::default(), sql.as_ref()).unwrap()[0];
-            let sql: Sql = statement.try_into().unwrap();
+        let sql: Sql = statement.try_into().unwrap();
 
         assert_eq!(sql.source, url);
         assert_eq!(sql.limit, Some(5));
