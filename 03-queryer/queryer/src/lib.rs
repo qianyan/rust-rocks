@@ -13,6 +13,7 @@ use fetchers::retrieve_data;
 use loader::detect_content;
 
 pub use dialect::PlatoDialect;
+pub use dialect::example_sql;
 
 #[derive(Debug)]
 pub struct DataSet(DataFrame);
