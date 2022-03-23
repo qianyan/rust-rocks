@@ -1,3 +1,4 @@
+//see https://blog.thoughtram.io/references-in-rust/
 fn main() {
     let data = vec![1, 2, 3, 4];
     let data_owned = &data;
@@ -14,10 +15,11 @@ fn main() {
 fn sum(data: &Vec<u32>) -> u32 {
     // 值的地址不会发生改变，但是引用的地址发生了变化。
     println!("addr of value: {:p}, addr of ref: {:p}", data, &data);
-    data.iter().fold(0, |acc, x| acc + x)
+    data.iter().fold(0, |acc, x: &u32| acc + x)
 }
 
 //addr of value 指的是 data 这个胖指针的地址，他是堆上数据的所有者
+//data_owned->data, &data_owned是自己的地址。
 //addr of value: 0x7ff7bc8c4290(0x7ff7bc8c4290), addr of data 0x7ff7bc8c4350, data_owned: 0x7ff7bc8c42a8, ptr of data: [1, 2, 3, 4]
 //addr of value: 0x7ff7bc8c4290, addr of ref: 0x7ff7bc8c40f0
 //sum of data_owned: 10
