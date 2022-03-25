@@ -14,14 +14,17 @@ fn main() {
     let mut node2 = Node::new(2);
     let mut node3 = Node::new(3);
     let node4 = Node::new(4);
-    node3.update_downstream(Rc::new(node4));
-
-    node1.update_downstream(Rc::new(node3));
+    node3.update_downstream(Rc::new(RefCell::new(node4)));
+    node1.update_downstream(Rc::new(RefCell::new(node3)));
     node2.update_downstream(node1.get_downstream().unwrap());
-//    let node5 = Node::new(5);
-//    let node3 = node1.get_downstream().unwrap();
-//    node3.update_downstream(Rc::new(node5));
-    borrow_with_ref_cell();
+    println!("node1: {:?}, node2: {:?}", node1, node2);
+
+    let node5 = Node::new(5);
+    let node3 = node1.get_downstream().unwrap();
+    let mut a = node3.borrow_mut();
+    a.update_downstream(Rc::new(RefCell::new(node5)));
+//    node3.borrow_mut().update_downstream(Rc::new(RefCell::new(node5)));
+
     println!("node1: {:?}, node2: {:?}", node1, node2);
 }
 
@@ -40,7 +43,7 @@ fn borrow_with_ref_cell() {
 #[derive(Debug)]
 struct Node {
     id: usize,
-    downstream: Option<Rc<Node>>,
+    downstream: Option<Rc<RefCell<Node>>>,
 }
 
 impl Node {
@@ -51,11 +54,11 @@ impl Node {
         }
     }
 
-    pub fn update_downstream(&mut self, downstream: Rc<Node>) {
+    pub fn update_downstream(&mut self, downstream: Rc<RefCell<Node>>) {
         self.downstream = Some(downstream);
     }
 
-    pub fn get_downstream(&self) -> Option<Rc<Node>> {
+    pub fn get_downstream(&self) -> Option<Rc<RefCell<Node>>> {
         self.downstream.as_ref().map(|v| v.clone())
     }
 }
