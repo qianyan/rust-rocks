@@ -14,6 +14,7 @@ macro_rules! show_size {
             "{:<24} {:>4}   {}  {}",
             "Type", "T", "Option<T>", "Result<T, io::Error>"
         );
+        println!("{}", "-".repeat(64));
     };
     ($t:ty) => {
         println!(
@@ -38,4 +39,5 @@ fn main() {
     show_size!(Vec<u8>);
     show_size!(HashMap<String, String>);
     show_size!(E);
+    show_size!(std::io::Error);
 }
