@@ -6,6 +6,22 @@ struct MyWriter<W> {
     writer: W,
 }
 
+// compiling error
+//impl<W: Write> MyWriter<W> {
+//    pub fn new(url: &str) -> Self {
+//        let stream = TcpStream::connect(url).unwrap();
+//        Self {
+//        // 逻辑上将，BufWriter 实现了 Writer
+//        trait，这个应该能通过编译，但是事实相反。我猜测这是Rust很严格参数多态需要实现单态化的限制。
+//            writer: BufWriter::new(stream)
+//        }
+//    }
+//
+//    pub fn write(&mut self, buf: &str) -> std::io::Result<()> {
+//        self.writer.write_all(buf.as_bytes())
+//    }
+//}
+
 impl<W: Write> MyWriter<W> {
     pub fn new(writer: W) -> Self {
         Self {
