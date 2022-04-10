@@ -34,9 +34,29 @@ pub trait Parse {
 //    }
 //}
 //
+// @see Default trait，绝大多数类型都实现了这个 trait，为数据结构提供缺省值。
+//impl<T> Parse for T
+//where 
+//    T: FromStr + Default,
+//{
+//    fn parse(s: &str) -> Self {
+//        let re: Regex = Regex::new(r"^[0-9]+(\.[0-9]+)?").unwrap();
+//
+//        let d = || Default::default();
+//
+//        if let Some(captures) = re.captures(s) {
+//            captures
+//                .get(0)
+//                .map_or(d(), |s| s.as_str().parse().unwrap_or(d()))
+//        } else {
+//            d()
+//        }
+//    }
+//}
+
 impl<T> Parse for T
 where 
-    T: FromStr + Default,
+    T: FromStr,
 {
     type Error = String;
     fn parse(s: &str) -> Result<Self, Self::Error> {
@@ -67,3 +87,6 @@ fn parse_should_work() {
     assert!(f64::parse("abcd").is_err());
 }
 
+fn main() {
+
+}
