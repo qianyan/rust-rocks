@@ -32,10 +32,20 @@ impl Add for &Complex {
     }
 }
 
+impl Add<f64> for &Complex {
+    type Output = Complex;
+
+    fn add(self, rhs: f64) -> Self::Output {
+        let real = self.real + rhs;
+        Complex::new(real, self.imagine)
+    }
+}
+
 #[test]
 fn override_add_for_complex() {
     let c1 = Complex::new(1.0, 1f64);
     let c2 = Complex::new(2 as f64, 3.0);
     assert_eq!(&c1 + &c2, Complex::new(3.0, 4.0));
+    assert_eq!(&c1 + 5.0, Complex::new(6.0, 1.0));
 }
 
