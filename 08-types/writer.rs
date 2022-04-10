@@ -11,7 +11,7 @@ struct MyWriter<W> {
 //    pub fn new(url: &str) -> Self {
 //        let stream = TcpStream::connect(url).unwrap();
 //        Self {
-//        // 逻辑上将，BufWriter 实现了 Writer
+//        // 逻辑上讲，BufWriter 实现了 Writer
 //        trait，这个应该能通过编译，但是事实相反。我猜测这是Rust很严格参数多态需要实现单态化的限制。
 //            writer: BufWriter::new(stream)
 //        }
