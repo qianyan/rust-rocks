@@ -2,10 +2,12 @@ mod parse;
 mod complex;
 mod dyn_dispatch;
 mod static_dispatch;
+mod quiz;
 
 use complex::*;
 use dyn_dispatch::run as format;
 use static_dispatch::run as cat;
+use quiz::run as quiz;
 
 fn main() {
     let c1 = Complex::new(1.0, 1f64);
@@ -17,4 +19,5 @@ fn main() {
 
     format();
     cat();
+    quiz();
 }
