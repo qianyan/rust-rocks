@@ -41,6 +41,11 @@ impl Add<f64> for &Complex {
     }
 }
 
+// 思考题
+// 对于 Add trait，如果我们不用泛型，把 Rhs 作为 Add trait 的关联类型，可以么？为什么？
+// 答案：我理解是可行的额，但是不合理，因为这样的话，Add for Complex 只能实现一次，Add<f64>
+// 就实现不了。
+
 #[test]
 fn override_add_for_complex() {
     let c1 = Complex::new(1.0, 1f64);
