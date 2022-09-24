@@ -50,9 +50,9 @@ pub fn get_args() -> MyResult<Config> {
     let number_nonblank_lines = _matches.is_present("number_nonblank_lines");
 
     Ok(Config {
-        files: files,
-        number_lines: number_lines,
-        number_nonblank_lines: number_nonblank_lines,
+        files,
+        number_lines,
+        number_nonblank_lines,
     })
 }
 
@@ -68,26 +68,22 @@ pub fn run(config: Config) -> MyResult<()> {
         match open(&filename) {
             Err(err) => eprintln!("Failed to open {}: {}", filename, err),
             Ok(reader) => {
-                let r = reader.lines();
-                let mut number = 0;
-                r.for_each(|line| match line {
-                    Err(err) => eprintln!("Failed to read line {}", err),
-                    Ok(line) => {
-                        if config.number_lines {
-                            number = number + 1;
-                            println!("{}\t{}", number, line)
-                        } else if config.number_nonblank_lines {
-                            if line.is_empty() {
-                                println!()
-                            } else {
-                                number = number + 1;
-                                println!("{}\t{}", number, line)
-                            }
+                let mut nonblank_line_num = 0;
+                for (line_num, line) in reader.lines().enumerate() {
+                    let line = line?;
+                    if config.number_lines {
+                        println!("{:>6}\t{}", line_num + 1, line)
+                    } else if config.number_nonblank_lines {
+                        if line.is_empty() {
+                            println!()
                         } else {
-                            println!("{}", line)
+                            nonblank_line_num += 1;
+                            println!("{:>6}\t{}", nonblank_line_num, line)
                         }
+                    } else {
+                        println!("{}", line)
                     }
-                });
+                }
             }
         }
     }
