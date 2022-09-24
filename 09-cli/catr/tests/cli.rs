@@ -67,3 +67,20 @@ fn fox() -> TestResult {
 fn spiders() -> TestResult {
     run(&["-n", FOX], format!("{}.out", FOX).as_str())
 }
+
+fn run_stdin(input_file: &str, args: &[&str], expected_file: &str) -> TestResult {
+    let input = fs::read_to_string(input_file)?;
+    let expected = fs::read_to_string(expected_file)?;
+    Command::cargo_bin(PRG)?
+        .args(args)
+        .write_stdin(input)
+        .assert()
+        .success()
+        .stdout(predicate::str::is_match(expected)?);
+    Ok(())
+}
+
+#[test]
+fn bustle_stdin() -> TestResult {
+    run_stdin(BUSTLE, &["-"], format!("{}.stdin.out", BUSTLE).as_str())
+}
